@@ -1,0 +1,23 @@
+/*!
+ * @pixiv/three-vrm v3.4.1
+ * VRM file loader for three.js.
+ *
+ * Copyright (c) 2019-2025 pixiv Inc.
+ * @pixiv/three-vrm is distributed under MIT License
+ * https://github.com/pixiv/three-vrm/blob/release/LICENSE
+ */
+
+/*!
+ * @pixiv/three-vrm-animation v3.4.1
+ * The implementation of VRM Animation
+ *
+ * Copyright (c) 2019-2025 pixiv Inc.
+ * @pixiv/three-vrm-animation is distributed under MIT License
+ * https://github.com/pixiv/three-vrm/blob/release/LICENSE
+ */
+
+/**
+ * @license
+ * Copyright 2010-2025 Three.js Authors
+ * SPDX-License-Identifier: MIT
+ */
