@@ -1,0 +1,73 @@
+// export class RoomLoaderManager {
+//   private loader: THREE.TextureLoader;
+
+//   constructor() {
+//     this.loader = new THREE.TextureLoader();
+//   }
+
+//   public loadFloor(scene: THREE.Scene): void {
+//     this.loader.load("./floor.png", (texture) => {
+//       texture.wrapS = THREE.RepeatWrapping;
+//       texture.wrapT = THREE.RepeatWrapping;
+//       texture.repeat.set(10, 10);
+
+//       const geometry = new THREE.PlaneGeometry(10, 10);
+//       const material = new THREE.MeshStandardMaterial({
+//         map: texture,
+//         side: THREE.DoubleSide,
+//       });
+//       const floor = new THREE.Mesh(geometry, material);
+//       floor.rotation.x = -Math.PI / 2;
+//       floor.position.y = 0;
+//       floor.receiveShadow = true;
+//       scene.add(floor);
+//     });
+//   }
+
+//   public loadWall(scene: THREE.Scene): void {
+//     this.loader.load("./wall.png", (texture) => {
+//       texture.wrapS = THREE.RepeatWrapping;
+//       texture.wrapT = THREE.RepeatWrapping;
+//       texture.repeat.set(20, 10);
+
+//       const geometry = new THREE.PlaneGeometry(10, 5);
+//       const material = new THREE.MeshStandardMaterial({
+//         map: texture,
+//         side: THREE.DoubleSide,
+//       });
+//       const wall = new THREE.Mesh(geometry, material);
+//       wall.position.z = 1;
+//       wall.position.y = 2.5;
+//       wall.rotation.y = Math.PI;
+//       wall.receiveShadow = true;
+//       scene.add(wall);
+//     });
+//   }
+
+//   public loadHabaki(scene: THREE.Scene): void {
+//     this.loader.load("./habaki.png", (texture) => {
+//       texture.wrapS = THREE.RepeatWrapping;
+//       texture.wrapT = THREE.RepeatWrapping;
+//       texture.repeat.set(20, 1);
+
+//       const height = 0.05;
+//       const geometry = new THREE.PlaneGeometry(10, height);
+//       const material = new THREE.MeshStandardMaterial({
+//         map: texture,
+//         side: THREE.DoubleSide,
+//       });
+//       const habaki = new THREE.Mesh(geometry, material);
+//       habaki.position.z = 0.999;
+//       habaki.position.y = height / 2;
+//       habaki.rotation.y = Math.PI;
+//       habaki.receiveShadow = true;
+//       scene.add(habaki);
+//     });
+//   }
+
+//   public loadAllTextures(scene: THREE.Scene): void {
+//     this.loadFloor(scene);
+//     this.loadWall(scene);
+//     this.loadHabaki(scene);
+//   }
+// }

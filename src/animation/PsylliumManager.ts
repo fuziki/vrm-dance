@@ -82,14 +82,14 @@ export class PsylliumManager {
             var x: number;
             var y: number;
             var z: number;
-            const minAngle = Math.PI * 0.15;  // 左端
-            const maxAngle = Math.PI * 0.85;  // 右端
+            const minAngle = Math.PI * -0.05;  // 左端
+            const maxAngle = Math.PI * 1.05;  // 右端
             const angle = Math.random() * (maxAngle - minAngle) + minAngle;
             var radius = Math.random();
 
             if (i < this.FIRST_FLOOR_STAND_COUNT) {
                 y = radius * 0.6 - 0.2;
-                radius = radius * 10 + 12;
+                radius = radius * 10 + 10;
             } else if (i < this.FIRST_FLOOR_STAND_COUNT + this.SECOND_FLOOR_STAND_COUNT) {
                 y = radius * 1.2 + 1.2;
                 radius = radius * 10 + 15;
@@ -100,6 +100,8 @@ export class PsylliumManager {
 
             x = Math.cos(angle) * radius * 0.5;
             z = (Math.sin(angle) * radius) * 0.5;
+
+            z += 2;
 
             dummy.position.set(x, y, z);
             dummy.updateMatrix();
@@ -137,10 +139,11 @@ export class PsylliumManager {
         for (let i = 0; i < meshCount; i++) {
             // ランダムな位置に配置
             const angle = Math.random() * Math.PI * 0.8 + (Math.PI / 2) * 0.2;
-            const radius = Math.random() * 7 + 2;
+            const radius = Math.random() * 6 + 2;
             const x = Math.cos(angle) * radius * 0.5;
-            var z = (Math.sin(angle) * radius) * 0.5;
-            if (z > 0) { z = -z; }
+            var z = (Math.sin(angle) * radius) * -0.5;
+            z -= 0.2;
+
             const y = Math.random() * 0.0 - 0.1;
             dummy.position.set(x, y, z);
 
