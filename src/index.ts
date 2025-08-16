@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { SceneManager } from "./core/SceneManager";
 import { LightManager } from "./core/LightManager";
-import { WorldManager } from "./loaders/WorldManager";
+import { WorldManager } from "./world/WorldManager";
 import { VRMLoaderManager } from "./loaders/VRMLoader";
 import { CameraController } from "./controls/CameraController";
 import { AnimationManager } from "./animation/AnimationManager";
