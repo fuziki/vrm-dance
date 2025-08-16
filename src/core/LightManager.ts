@@ -5,14 +5,10 @@ export class LightManager {
   private directionalLight2: THREE.DirectionalLight;
   private ambientLight: THREE.AmbientLight;
 
-  constructor(scene: THREE.Scene) {
+  constructor() {
     this.directionalLight = this.createDirectionalLight();
     this.directionalLight2 = this.createDirectionalLight2();
     this.ambientLight = this.createAmbientLight();
-
-    scene.add(this.directionalLight);
-    scene.add(this.directionalLight2);
-    scene.add(this.ambientLight);
   }
 
   private createDirectionalLight(): THREE.DirectionalLight {
@@ -39,5 +35,11 @@ export class LightManager {
 
   private createAmbientLight(): THREE.AmbientLight {
     return new THREE.AmbientLight(0xffffff, 0.5);
+  }
+
+  public load(scene: THREE.Scene) {
+    scene.add(this.directionalLight);
+    scene.add(this.directionalLight2);
+    scene.add(this.ambientLight);
   }
 }

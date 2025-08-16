@@ -28,7 +28,7 @@ class App {
 
     // 各マネージャーの初期化
     this.sceneManager = new SceneManager(canvas);
-    this.lightManager = new LightManager(this.sceneManager.scene);
+    this.lightManager = new LightManager();
     this.worldManager = new WorldManager();
     this.vrmLoader = new VRMLoaderManager(this.sceneManager.scene);
     this.cameraController = new CameraController(
@@ -44,6 +44,7 @@ class App {
   }
 
   private async init(): Promise<void> {
+    this.lightManager.load(this.sceneManager.scene);
     await this.worldManager.load(this.sceneManager.scene);
     await this.psylliumManager.load(this.sceneManager.scene);
 
@@ -77,7 +78,7 @@ class App {
     this.animationManager.update(delta);
     this.vrmLoader.update(delta);
     this.cameraController.update();
-    this.psylliumManager.update();
+    this.psylliumManager.update(); // After Camera
     this.worldManager.update();
 
     // レンダリング
