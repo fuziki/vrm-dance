@@ -58,8 +58,8 @@ export class StageLoader {
   }
 
   async load(scene: THREE.Scene): Promise<void> {
-    const { SCALE, YOKO, NANAME } = StageConfig;
-    const squareSide = YOKO * SCALE / 2 + NANAME * SCALE / Math.sqrt(2);
+    const { SCALE, MAIN_EDGE_LENGTH, CORNER_EDGE_LENGTH } = StageConfig;
+    const squareSide = MAIN_EDGE_LENGTH * SCALE / 2 + CORNER_EDGE_LENGTH * SCALE / Math.sqrt(2);
 
     const topTexture = await this.loader.loadAsync("./stage.png");
     topTexture.colorSpace = THREE.SRGBColorSpace;
@@ -67,7 +67,7 @@ export class StageLoader {
     const sideTexture = await this.loader.loadAsync("./curtain.png");
     sideTexture.colorSpace = THREE.SRGBColorSpace;
 
-    const stageMesh = this.createOctagonalPrism(YOKO, NANAME, SCALE, topTexture, sideTexture);
+    const stageMesh = this.createOctagonalPrism(MAIN_EDGE_LENGTH, CORNER_EDGE_LENGTH, SCALE, topTexture, sideTexture);
     stageMesh.position.y = -0.25;
     stageMesh.position.z = squareSide - StageConfig.STAGE_OFFSET;
     stageMesh.receiveShadow = true;

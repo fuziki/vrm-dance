@@ -2,8 +2,8 @@ import * as THREE from "three";
 
 export class StageConfig {
   static readonly SCALE = 0.5;
-  static readonly YOKO = 10;
-  static readonly NANAME = 2;
+  static readonly MAIN_EDGE_LENGTH = 10;
+  static readonly CORNER_EDGE_LENGTH = 2;
   static readonly STAGE_OFFSET = 0.5;
   static readonly FOG_RADIUS = 10;
   static readonly LED_UNIFORMS = {

@@ -76,25 +76,25 @@ export class LEDSystem {
   }
 
   load(scene: THREE.Scene): void {
-    const { SCALE, YOKO, NANAME } = StageConfig;
-    const squareSide = NANAME * SCALE / Math.sqrt(2) / 2;
+    const { SCALE, MAIN_EDGE_LENGTH, CORNER_EDGE_LENGTH } = StageConfig;
+    const squareSide = CORNER_EDGE_LENGTH * SCALE / Math.sqrt(2) / 2;
     const offset = StageConfig.STAGE_OFFSET;
-    const offsetX = YOKO * SCALE / 2;
+    const offsetX = MAIN_EDGE_LENGTH * SCALE / 2;
 
     // LED プレーン設定
     const ledConfigs = [
       {
-        width: YOKO,
+        width: MAIN_EDGE_LENGTH,
         rotation: new THREE.Euler(0, 0, Math.PI),
         position: new THREE.Vector3(0, -0.02, -offset)
       },
       {
-        width: NANAME,
+        width: CORNER_EDGE_LENGTH,
         rotation: new THREE.Euler(0, Math.PI / 4 * 3, 0),
         position: new THREE.Vector3(squareSide + offsetX, -0.02, squareSide - offset)
       },
       {
-        width: NANAME,
+        width: CORNER_EDGE_LENGTH,
         rotation: new THREE.Euler(0, -Math.PI / 4 * 3, 0),
         position: new THREE.Vector3(-squareSide - offsetX, -0.02, squareSide - offset)
       }
