@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import vertexShader from '../shaders/stick.vert';
-import fragmentShader from '../shaders/stick.frag';
+import vertexShader from '../rendering/shaders/stick.vert';
+import fragmentShader from '../rendering/shaders/stick.frag';
 
 export class PsylliumManager {
     private loader: THREE.TextureLoader;

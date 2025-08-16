@@ -5,7 +5,7 @@ import { RoomLoaderManager } from "./loaders/RoomLoaderManager";
 import { VRMLoaderManager } from "./loaders/VRMLoader";
 import { CameraController } from "./controls/CameraController";
 import { AnimationManager } from "./animation/AnimationManager";
-import { PsylliumManager } from "./animation/PsylliumManager";
+import { PsylliumManager } from "./effects/PsylliumManager";
 import { FileInput } from "./ui/FileInput";
 
 class App {
