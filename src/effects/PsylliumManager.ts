@@ -26,15 +26,10 @@ export class PsylliumManager {
         this.loader = new THREE.TextureLoader();
         this.clock = new THREE.Clock();
         this.camera = camera;
-
-        // マテリアルを作成
-        this.arenaAdditiveMaterial = this.createPsylliumMaterial(THREE.AdditiveBlending, 'full3.png');
-        this.arenaNormalMaterial = this.createPsylliumMaterial(THREE.NormalBlending, 'full2.png');
-        this.standMaterial = this.createPsylliumMaterial(THREE.AdditiveBlending, 'full-b.png')
     }
 
-    private createPsylliumMaterial(blendingMode: THREE.Blending, texturePath: string): THREE.ShaderMaterial {
-        const tex = this.loader.load(texturePath);
+    private async createPsylliumMaterial(blendingMode: THREE.Blending, texturePath: string): Promise<THREE.ShaderMaterial> {
+        const tex = await this.loader.loadAsync(texturePath);
         tex.colorSpace = THREE.SRGBColorSpace;
         return new THREE.ShaderMaterial({
             vertexShader: vertexShader,
@@ -56,7 +51,12 @@ export class PsylliumManager {
         });
     }
 
-    public loadPsyllium(scene: THREE.Scene): void {
+    public async load(scene: THREE.Scene): Promise<void> {
+        // マテリアルを作成
+        this.arenaAdditiveMaterial = await this.createPsylliumMaterial(THREE.AdditiveBlending, 'full3.png');
+        this.arenaNormalMaterial = await this.createPsylliumMaterial(THREE.NormalBlending, 'full2.png');
+        this.standMaterial = await this.createPsylliumMaterial(THREE.AdditiveBlending, 'full-b.png');
+
         this.loadStand(scene);
         this.loadArena(scene);
     }

@@ -9,8 +9,6 @@ export class VRMLoaderManager {
   private scene: THREE.Scene;
   private currentVrm: GLTF | null;
   public currentVrmAnimation: GLTF | null;
-  // public onVRMLoaded?: (vrm: GLTF) => void;
-  // public onVRMALoaded?: (vrma: GLTF) => void;
   public onLoaded?: (vrm: GLTF, vrma: GLTF) => void;
 
   constructor(scene: THREE.Scene) {
@@ -61,10 +59,6 @@ export class VRMLoaderManager {
     this.currentVrm = vrm;
     this.scene.add(vrm.scene);
 
-    // if (this.onVRMLoaded) {
-    //   this.onVRMLoaded(vrm);
-    // }
-
     this.loadVRMA();
   }
 
@@ -74,9 +68,6 @@ export class VRMLoaderManager {
 
     this.currentVrmAnimation = vrmAnimations[0] ?? null;
 
-    // if (this.onVRMALoaded) {
-    //   this.onVRMALoaded(this.currentVrmAnimation);
-    // }
     if (this.onLoaded && this.currentVrm && this.currentVrmAnimation) {
       this.onLoaded(this.currentVrm!, this.currentVrmAnimation!)
     }

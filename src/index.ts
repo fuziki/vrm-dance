@@ -43,15 +43,9 @@ class App {
     this.init();
   }
 
-  private init(): void {
-    // テクスチャの読み込み
-    this.roomLoader.loadAllTextures(this.sceneManager.scene);
-    this.psylliumManager.loadPsyllium(this.sceneManager.scene);
-
-    // VRMローダーのコールバック設定
-    // this.vrmLoader.onVRMLoaded = (vrm) => {
-    //   this.handleVRMLoaded(vrm);
-    // };
+  private async init(): Promise<void> {
+    await this.roomLoader.load(this.sceneManager.scene);
+    await this.psylliumManager.load(this.sceneManager.scene);
 
     this.vrmLoader.onLoaded = (vrm, vrma) => {
       this.handleVRMALoaded(vrm, vrma);
@@ -71,38 +65,19 @@ class App {
     this.animate();
   }
 
-  // private handleVRMLoaded(vrm: any): void {
-  //   // VRMが読み込まれたら、アニメーションの初期化を試みる
-  //   if (this.vrmLoader.currentVrmAnimation) {
-  //     this.animationManager.initAnimation(vrm, this.vrmLoader.currentVrmAnimation);
-  //   }
-  // }
-
   private handleVRMALoaded(vrm: any, vrma: any): void {
-    // VRMAが読み込まれたら、VRMがあればアニメーションを初期化
     this.animationManager.initAnimation(vrm, vrma);
     this.fileInput.hide();
   }
 
   private animate(): void {
     requestAnimationFrame(() => this.animate());
-
     const delta = this.clock.getDelta();
 
-    // アニメーション更新
     this.animationManager.update(delta);
-
-    // VRM更新
-    // if (this.vrmLoader.currentVrm) {
-    //   this.vrmLoader.currentVrm.update(delta);
-    // }
     this.vrmLoader.update(delta);
-
-    // カメラ更新
     this.cameraController.update();
-
     this.psylliumManager.update();
-
     this.roomLoader.update();
 
     // レンダリング

@@ -24,33 +24,32 @@ class FogLoader {
     this.loader = loader;
   }
 
-  load(scene: THREE.Scene): void {
-    this.loader.load("./fog.png", (texture) => {
-      const radius = RoomConfig.FOG_RADIUS;
-      const height = Math.PI * radius;
+  async load(scene: THREE.Scene): Promise<void> {
+    const texture = await this.loader.loadAsync("./fog.png");
+    const radius = RoomConfig.FOG_RADIUS;
+    const height = Math.PI * radius;
 
-      const geometry = new THREE.CylinderGeometry(
-        radius, radius, height,
-        64, 1, true,
-        -Math.PI / 2, Math.PI
-      );
+    const geometry = new THREE.CylinderGeometry(
+      radius, radius, height,
+      64, 1, true,
+      -Math.PI / 2, Math.PI
+    );
 
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.wrapS = THREE.ClampToEdgeWrapping;
-      texture.wrapT = THREE.ClampToEdgeWrapping;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.wrapS = THREE.ClampToEdgeWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
 
-      const material = new THREE.MeshBasicMaterial({
-        map: texture,
-        transparent: true,
-        depthWrite: false,
-        side: THREE.DoubleSide
-      });
-
-      const halfCylinder = new THREE.Mesh(geometry, material);
-      halfCylinder.position.y = radius / 2 - 2.5;
-
-      scene.add(halfCylinder);
+    const material = new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide
     });
+
+    const halfCylinder = new THREE.Mesh(geometry, material);
+    halfCylinder.position.y = radius / 2 - 2.5;
+
+    scene.add(halfCylinder);
   }
 }
 
@@ -220,14 +219,14 @@ class StageLoader {
     return group;
   }
 
-  load(scene: THREE.Scene): void {
+  async load(scene: THREE.Scene): Promise<void> {
     const { SCALE, YOKO, NANAME } = RoomConfig;
     const squareSide = YOKO * SCALE / 2 + NANAME * SCALE / Math.sqrt(2);
 
-    const topTexture = this.loader.load("./stage.png");
+    const topTexture = await this.loader.loadAsync("./stage.png");
     topTexture.colorSpace = THREE.SRGBColorSpace;
 
-    const sideTexture = this.loader.load("./curtain.png");
+    const sideTexture = await this.loader.loadAsync("./curtain.png");
     sideTexture.colorSpace = THREE.SRGBColorSpace;
 
     const stageMesh = this.createOctagonalPrism(YOKO, NANAME, SCALE, topTexture, sideTexture);
@@ -257,22 +256,22 @@ export class RoomLoaderManager {
     this.stageLoader = new StageLoader(this.loader);
   }
 
-  public loadFog(scene: THREE.Scene): void {
-    this.fogLoader.load(scene);
+  public async loadFog(scene: THREE.Scene): Promise<void> {
+    await this.fogLoader.load(scene);
   }
 
   public loadLED(scene: THREE.Scene): void {
     this.ledSystem.load(scene);
   }
 
-  public loadStage(scene: THREE.Scene): void {
-    this.stageLoader.load(scene);
+  public async loadStage(scene: THREE.Scene): Promise<void> {
+    await this.stageLoader.load(scene);
   }
 
-  public loadAllTextures(scene: THREE.Scene): void {
-    this.loadFog(scene);
+  public async load(scene: THREE.Scene): Promise<void> {
+    await this.loadFog(scene);
     this.loadLED(scene);
-    this.loadStage(scene);
+    await this.loadStage(scene);
   }
 
   public update(): void {
