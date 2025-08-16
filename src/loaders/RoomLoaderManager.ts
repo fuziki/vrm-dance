@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OctagonalGeometryUtils } from "../util/OctagonalGeometryUtils";
 
 // 設定値を管理
-class RoomConfig {
+class StageConfig {
   static readonly SCALE = 0.5;
   static readonly YOKO = 10;
   static readonly NANAME = 2;
@@ -26,7 +26,7 @@ class FogLoader {
 
   async load(scene: THREE.Scene): Promise<void> {
     const texture = await this.loader.loadAsync("./fog.png");
-    const radius = RoomConfig.FOG_RADIUS;
+    const radius = StageConfig.FOG_RADIUS;
     const height = Math.PI * radius;
 
     const geometry = new THREE.CylinderGeometry(
@@ -66,10 +66,10 @@ class LEDSystem {
   private createMaterial(): void {
     const uniforms = {
       time: { value: 0 },
-      color: { value: RoomConfig.LED_UNIFORMS.color.clone() },
-      ledCount: { value: RoomConfig.LED_UNIFORMS.ledCount },
-      speed: { value: RoomConfig.LED_UNIFORMS.speed },
-      radius: { value: RoomConfig.LED_UNIFORMS.radius }
+      color: { value: StageConfig.LED_UNIFORMS.color.clone() },
+      ledCount: { value: StageConfig.LED_UNIFORMS.ledCount },
+      speed: { value: StageConfig.LED_UNIFORMS.speed },
+      radius: { value: StageConfig.LED_UNIFORMS.radius }
     };
 
     this.material = new THREE.ShaderMaterial({
@@ -86,7 +86,7 @@ class LEDSystem {
 
   private createLEDPlane(width: number, rotation: THREE.Euler, position: THREE.Vector3): THREE.Mesh {
     const plane = new THREE.Mesh(
-      new THREE.PlaneGeometry(width * RoomConfig.SCALE, 0.015),
+      new THREE.PlaneGeometry(width * StageConfig.SCALE, 0.015),
       this.material
     );
 
@@ -113,7 +113,7 @@ class LEDSystem {
     });
 
     const plane = new THREE.Mesh(
-      new THREE.PlaneGeometry(width * RoomConfig.SCALE, 0.025),
+      new THREE.PlaneGeometry(width * StageConfig.SCALE, 0.025),
       baseMaterial
     );
 
@@ -125,9 +125,9 @@ class LEDSystem {
   }
 
   load(scene: THREE.Scene): void {
-    const { SCALE, YOKO, NANAME } = RoomConfig;
+    const { SCALE, YOKO, NANAME } = StageConfig;
     const squareSide = NANAME * SCALE / Math.sqrt(2) / 2;
-    const offset = RoomConfig.STAGE_OFFSET;
+    const offset = StageConfig.STAGE_OFFSET;
     const offsetX = YOKO * SCALE / 2;
 
     // LED プレーン設定
@@ -220,7 +220,7 @@ class StageLoader {
   }
 
   async load(scene: THREE.Scene): Promise<void> {
-    const { SCALE, YOKO, NANAME } = RoomConfig;
+    const { SCALE, YOKO, NANAME } = StageConfig;
     const squareSide = YOKO * SCALE / 2 + NANAME * SCALE / Math.sqrt(2);
 
     const topTexture = await this.loader.loadAsync("./stage.png");
@@ -231,7 +231,7 @@ class StageLoader {
 
     const stageMesh = this.createOctagonalPrism(YOKO, NANAME, SCALE, topTexture, sideTexture);
     stageMesh.position.y = -0.25;
-    stageMesh.position.z = squareSide - RoomConfig.STAGE_OFFSET;
+    stageMesh.position.z = squareSide - StageConfig.STAGE_OFFSET;
     stageMesh.receiveShadow = true;
 
     scene.add(stageMesh);
@@ -239,7 +239,7 @@ class StageLoader {
 }
 
 // メインマネージャークラス
-export class RoomLoaderManager {
+export class WorldManager {
   private loader: THREE.TextureLoader;
   private clock: THREE.Clock;
   private fogLoader: FogLoader;
@@ -281,12 +281,12 @@ export class RoomLoaderManager {
   // 設定変更用のメソッド
   public updateLEDColor(color: THREE.Color): void {
     // LEDシステムの色を変更
-    RoomConfig.LED_UNIFORMS.color = color;
+    StageConfig.LED_UNIFORMS.color = color;
   }
 
   public updateLEDSpeed(speed: number): void {
     // LEDシステムのスピードを変更
-    RoomConfig.LED_UNIFORMS.speed = speed;
+    StageConfig.LED_UNIFORMS.speed = speed;
   }
 }
 

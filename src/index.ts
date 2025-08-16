@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { SceneManager } from "./core/SceneManager";
 import { LightManager } from "./core/LightManager";
-import { RoomLoaderManager } from "./loaders/RoomLoaderManager";
+import { WorldManager } from "./loaders/RoomLoaderManager";
 import { VRMLoaderManager } from "./loaders/VRMLoader";
 import { CameraController } from "./controls/CameraController";
 import { AnimationManager } from "./animation/AnimationManager";
@@ -11,7 +11,7 @@ import { FileInput } from "./ui/FileInput";
 class App {
   private sceneManager: SceneManager;
   private lightManager: LightManager;
-  private roomLoader: RoomLoaderManager;
+  private worldManager: WorldManager;
   private vrmLoader: VRMLoaderManager;
   private cameraController: CameraController;
   private animationManager: AnimationManager;
@@ -29,7 +29,7 @@ class App {
     // 各マネージャーの初期化
     this.sceneManager = new SceneManager(canvas);
     this.lightManager = new LightManager(this.sceneManager.scene);
-    this.roomLoader = new RoomLoaderManager();
+    this.worldManager = new WorldManager();
     this.vrmLoader = new VRMLoaderManager(this.sceneManager.scene);
     this.cameraController = new CameraController(
       this.sceneManager.camera,
@@ -44,7 +44,7 @@ class App {
   }
 
   private async init(): Promise<void> {
-    await this.roomLoader.load(this.sceneManager.scene);
+    await this.worldManager.load(this.sceneManager.scene);
     await this.psylliumManager.load(this.sceneManager.scene);
 
     this.vrmLoader.onLoaded = (vrm, vrma) => {
@@ -78,7 +78,7 @@ class App {
     this.vrmLoader.update(delta);
     this.cameraController.update();
     this.psylliumManager.update();
-    this.roomLoader.update();
+    this.worldManager.update();
 
     // レンダリング
     this.sceneManager.render();
