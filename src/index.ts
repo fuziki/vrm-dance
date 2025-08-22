@@ -29,12 +29,12 @@ class App {
     // 各マネージャーの初期化
     this.sceneManager = new SceneManager(canvas);
     this.lightManager = new LightManager();
-    this.worldManager = new WorldManager();
     this.vrmLoader = new VRMLoaderManager(this.sceneManager.scene);
     this.cameraController = new CameraController(
       this.sceneManager.camera,
       this.sceneManager.renderer.domElement
     );
+    this.worldManager = new WorldManager(this.sceneManager.scene, this.sceneManager.camera);
     this.animationManager = new AnimationManager();
     this.psylliumManager = new PsylliumManager(this.sceneManager.camera);
     this.fileInput = new FileInput();

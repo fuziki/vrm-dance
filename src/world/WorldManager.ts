@@ -3,6 +3,7 @@ import { StageConfig } from "./config/StageConfig";
 import { FogLoader } from "./stage/FogLoader";
 import { StageLoader } from "./stage/StageLoader";
 import { LEDSystem } from "./lighting/LEDSystem";
+import { SpotlightSystem } from "../lighting/SpotlightSystem";
 
 export class WorldManager {
   private loader: THREE.TextureLoader;
@@ -10,8 +11,9 @@ export class WorldManager {
   private fogLoader: FogLoader;
   private ledSystem: LEDSystem;
   private stageLoader: StageLoader;
+  private spotlightSystem: SpotlightSystem;
 
-  constructor() {
+  constructor(scene: THREE.Scene, camera: THREE.Camera) {
     this.loader = new THREE.TextureLoader();
     this.clock = new THREE.Clock();
 
@@ -19,6 +21,7 @@ export class WorldManager {
     this.fogLoader = new FogLoader(this.loader);
     this.ledSystem = new LEDSystem(this.clock);
     this.stageLoader = new StageLoader(this.loader);
+    this.spotlightSystem = new SpotlightSystem(scene, camera);
   }
 
   public async loadFog(scene: THREE.Scene): Promise<void> {
@@ -37,10 +40,12 @@ export class WorldManager {
     await this.loadFog(scene);
     this.loadLED(scene);
     await this.loadStage(scene);
+    this.spotlightSystem.loadLightUnits();
   }
 
   public update(): void {
     this.ledSystem.update();
+    this.spotlightSystem.update();
   }
 
   // 設定変更用のメソッド
@@ -50,5 +55,13 @@ export class WorldManager {
 
   public updateLEDSpeed(speed: number): void {
     StageConfig.LED_UNIFORMS.speed = speed;
+  }
+
+  public updateSpotlightConfig(): void {
+    this.spotlightSystem.loadLightUnits();
+  }
+
+  public dispose(): void {
+    this.spotlightSystem.dispose();
   }
 }

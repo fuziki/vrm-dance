@@ -12,7 +12,7 @@ export class LightManager {
   }
 
   private createDirectionalLight(): THREE.DirectionalLight {
-    const light = new THREE.DirectionalLight(0xffffff, 1.5);
+    const light = new THREE.DirectionalLight(0xffffff, 0.7);
     light.position.set(1, 2.0, -1.0);
     light.castShadow = true;
     light.shadow.mapSize.set(512, 512);
@@ -23,7 +23,7 @@ export class LightManager {
   }
 
   private createDirectionalLight2(): THREE.DirectionalLight {
-    const light = new THREE.DirectionalLight(0xffffff, 1.5);
+    const light = new THREE.DirectionalLight(0xffffff, 0.7);
     light.position.set(-1, 2.0, -1.0);
     light.castShadow = true;
     light.shadow.mapSize.set(512, 512);
@@ -34,7 +34,7 @@ export class LightManager {
   }
 
   private createAmbientLight(): THREE.AmbientLight {
-    return new THREE.AmbientLight(0xffffff, 0.5);
+    return new THREE.AmbientLight(0xffffff, 2.2);
   }
 
   public load(scene: THREE.Scene) {
