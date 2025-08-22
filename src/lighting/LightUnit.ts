@@ -22,10 +22,8 @@ export class LightUnit {
     this.createSingleBeams(lightCount, radius, tiltAngle);
   }
 
-  public setUnitTilt(x: number, y: number, z: number): void {
-    this.group.rotation.x = (x * Math.PI) / 180;
-    this.group.rotation.y = (y * Math.PI) / 180;
-    this.group.rotation.z = (z * Math.PI) / 180;
+  public setUnitTilt(rotation: THREE.Euler): void {
+    this.group.rotation.copy(rotation);
   }
 
   public setUnitPosition(x: number, y: number, z: number): void {
