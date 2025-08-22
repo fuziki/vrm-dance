@@ -17,6 +17,15 @@ export class StageConfig {
   static readonly MAIN_EDGE_LENGTH = 10;
   static readonly CORNER_EDGE_LENGTH = 2;
   static readonly STAGE_OFFSET = 0.5;
+  static readonly STAGE_LIFT_ENABLED = false;
+  static readonly STAGE_LIFT_SIZE = 3.5;
+
+  // LiftStage設定
+  static readonly LIFT_STAGE_FLOOR_THICKNESS = 0.05;  // 床の厚さ
+  static readonly LIFT_STAGE_PILLAR_HEIGHT = 0.5;    // 柱の高さ
+  static readonly LIFT_STAGE_PILLAR_SIZE = 3.3;      // 柱の太さ（一辺）
+  static readonly LIFT_STAGE_HEIGHT = 0.1;           // LiftStageの高さ（Y座標）
+
   static readonly FOG_RADIUS = 10;
 
   static readonly LED_UNIFORMS = {
