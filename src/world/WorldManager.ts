@@ -61,6 +61,10 @@ export class WorldManager {
     this.spotlightSystem.loadLightUnits();
   }
 
+  public getSpotlightSystem(): SpotlightSystem {
+    return this.spotlightSystem;
+  }
+
   public dispose(): void {
     this.spotlightSystem.dispose();
   }

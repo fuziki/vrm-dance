@@ -175,6 +175,24 @@ export class SpotlightSystem {
     });
   }
 
+  public updateSideStageMaterialUniforms(uniforms: Partial<SpotlightUniforms>): void {
+    this.materialManager.updateUniforms(uniforms);
+
+    this.lightUnits.forEach(lightUnit => {
+      // SpotlightUniforms already has the correct keys, pass them directly
+      lightUnit.updateMaterialUniforms(uniforms as Record<string, any>);
+    });
+  }
+
+  public updateCeilingMaterialUniforms(uniforms: Partial<SpotlightUniforms>): void {
+    this.audienceMaterialManager.updateUniforms(uniforms);
+
+    this.audienceLightUnits.forEach(lightUnit => {
+      // SpotlightUniforms already has the correct keys, pass them directly
+      lightUnit.updateMaterialUniforms(uniforms as Record<string, any>);
+    });
+  }
+
   public setWireframeVisibility(visible: boolean): void {
     this.lightUnits.forEach(lightUnit => {
       lightUnit.setWireframeVisibility(visible);

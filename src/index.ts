@@ -7,6 +7,7 @@ import { CameraController } from "./controls/CameraController";
 import { AnimationManager } from "./animation/AnimationManager";
 import { PsylliumManager } from "./effects/PsylliumManager";
 import { FileInput } from "./ui/FileInput";
+import { ControlPanel } from "./ui/ControlPanel";
 
 class App {
   private sceneManager: SceneManager;
@@ -17,6 +18,7 @@ class App {
   private animationManager: AnimationManager;
   private psylliumManager: PsylliumManager;
   private fileInput: FileInput;
+  private controlPanel: ControlPanel;
   private clock: THREE.Clock;
 
   constructor() {
@@ -38,6 +40,7 @@ class App {
     this.animationManager = new AnimationManager();
     this.psylliumManager = new PsylliumManager(this.sceneManager.camera);
     this.fileInput = new FileInput();
+    this.controlPanel = new ControlPanel();
     this.clock = new THREE.Clock();
 
     this.init();
@@ -47,6 +50,9 @@ class App {
     this.lightManager.load(this.sceneManager.scene);
     await this.worldManager.load(this.sceneManager.scene);
     await this.psylliumManager.load(this.sceneManager.scene);
+
+    // Connect control panel to spotlight system
+    this.controlPanel.setSpotlightSystem(this.worldManager.getSpotlightSystem());
 
     this.vrmLoader.onLoaded = (vrm, vrma) => {
       this.handleVRMALoaded(vrm, vrma);

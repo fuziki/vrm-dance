@@ -43,9 +43,8 @@ export class MaterialManager {
 
   public updateUniforms(uniforms: Partial<SpotlightUniforms>): void {
     Object.keys(uniforms).forEach(key => {
-      const uniformKey = `u${key.charAt(0).toUpperCase()}${key.slice(1)}`;
-      if (this.billboardMaterial.uniforms[uniformKey]) {
-        this.billboardMaterial.uniforms[uniformKey].value = uniforms[key as keyof SpotlightUniforms];
+      if (this.billboardMaterial.uniforms[key]) {
+        this.billboardMaterial.uniforms[key].value = uniforms[key as keyof SpotlightUniforms];
       }
     });
   }

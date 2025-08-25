@@ -115,9 +115,10 @@ export class LightUnit {
 
   public updateMaterialUniforms(uniforms: Record<string, any>): void {
     this.singleBeams.forEach(singleBeam => {
+      const material = singleBeam.material as THREE.ShaderMaterial;
       Object.keys(uniforms).forEach(key => {
-        if ((singleBeam.material as THREE.ShaderMaterial).uniforms[key]) {
-          (singleBeam.material as THREE.ShaderMaterial).uniforms[key].value = uniforms[key];
+        if (material.uniforms[key]) {
+          material.uniforms[key].value = uniforms[key];
         }
       });
     });
