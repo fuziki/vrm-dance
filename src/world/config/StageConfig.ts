@@ -19,7 +19,7 @@ export interface LightUnitConfig {
   rotationSpeed: number;
 }
 
-export interface SingleBeamConfig {
+export interface BeamConfig {
   height: number;
   topWidth: number;
   bottomWidth: number;
@@ -29,7 +29,7 @@ export interface SingleBeamConfig {
   nearTopBrightness: number;
 }
 
-export interface SystemConfig {
+export interface SideStageSystemConfig {
   unitCount: number;
   unitSpacing: number;
   positionY: number;
@@ -37,13 +37,13 @@ export interface SystemConfig {
   tiltGain: number;
 }
 
-export interface AudienceTierConfig {
+export interface CeilingLightConfig {
   enabled: boolean;
   distance: number;
   positionY: number;
   unitCount: number;
   lightUnit: LightUnitConfig;
-  singleBeam: SingleBeamConfig;
+  beam: BeamConfig;
 }
 
 export interface DebugConfig {
@@ -77,28 +77,50 @@ export class StageConfig {
 
   // スポットライト設定
   static readonly SPOTLIGHT = {
-    // システム全体設定
-    system: {
-      unitCount: 4, // LightUnit数
-      unitSpacing: 0.8, // ユニット間距離
-      positionY: -0.1, // Y座標
-      positionZ: 6.5, // Z座標
-      tiltGain: 0.4, // ユニット傾き調整係数
+    // サイドステージライト設定
+    sideStage: {
+      // システム全体設定
+      system: {
+        unitCount: 4, // LightUnit数
+        unitSpacing: 0.8, // ユニット間距離
+        positionY: -0.1, // Y座標
+        positionZ: 6.5, // Z座標
+        tiltGain: 0.4, // ユニット傾き調整係数
+      } as SideStageSystemConfig,
+
+      // LightUnit設定
+      lightUnit: {
+        count: 6, // Beam数（LightUnitの表現）
+        circleRadius: 0.05, // ビーム配置半径
+        tiltAngle: -3, // ビーム傾斜角度
+        rotationSpeed: 0.8, // 回転速度
+      } as LightUnitConfig,
+
+      // ビーム設定
+      beam: {
+        height: 10, // ビーム高さ
+        topWidth: 1.5, // 上部幅
+        bottomWidth: 0.2, // 下部幅
+        verticalGain: 0.5, // 縦方向光強度
+        horizontalGain: 0.8, // 横方向光強度
+        topBrightness: 0.0, // 最上部明度
+        nearTopBrightness: 0.25, // 上部付近明度
+      } as BeamConfig,
     },
 
-    // 2階席客席照明設定
-    audienceTier: {
-      enabled: true, // 2階席照明有効化
+    // 天井ライト設定（旧 2階席客席照明）
+    ceiling: {
+      enabled: true, // 天井ライト有効化
       distance: 10, // ステージからの距離 (k値)
-      positionY: 12, // Y座標（客席高さ）
-      unitCount: 10, // 2階席LightUnit数
+      positionY: 12, // Y座標（天井高さ）
+      unitCount: 10, // 天井LightUnit数
       lightUnit: {
-        count: 12, // SingleBeam数（2階席用、既存より多く）
+        count: 12, // Beam数（天井用、既存より多く）
         circleRadius: 0.08, // ビーム配置半径（既存より大きく）
         tiltAngle: -6, // ビーム傾斜角度（既存より急角度）
         rotationSpeed: 0, // 回転速度（既存より遅く）
-      },
-      singleBeam: {
+      } as LightUnitConfig,
+      beam: {
         height: 18, // ビーム高さ（既存より長く）
         topWidth: 3.0, // 上部幅
         bottomWidth: 0.3, // 下部幅
@@ -106,33 +128,14 @@ export class StageConfig {
         horizontalGain: 1, // 横方向光強度
         topBrightness: 0.1, // 最上部明度
         nearTopBrightness: 0.4, // 上部付近明度
-      },
-    },
-
-    // LightUnit設定
-    lightUnit: {
-      count: 6, // SingleBeam数（LightUnitの表現）
-      circleRadius: 0.05, // ビーム配置半径
-      tiltAngle: -3, // ビーム傾斜角度
-      rotationSpeed: 0.8, // 回転速度
-    },
-
-    // SingleBeam設定
-    singleBeam: {
-      height: 10, // ビーム高さ
-      topWidth: 1.5, // 上部幅
-      bottomWidth: 0.2, // 下部幅
-      verticalGain: 0.5, // 縦方向光強度
-      horizontalGain: 0.8, // 横方向光強度
-      topBrightness: 0.0, // 最上部明度
-      nearTopBrightness: 0.25, // 上部付近明度
-    },
+      } as BeamConfig,
+    } as CeilingLightConfig,
 
     // デバッグ設定
     debug: {
       showUV: false,
       showVerticalOnly: false,
       showHorizontalOnly: false,
-    },
+    } as DebugConfig,
   };
 }

@@ -5,7 +5,7 @@ export class LightUnit {
   private materialManager: SpotLightMaterialManager;
   private geometryTemplate: THREE.PlaneGeometry;
   public group: THREE.Group;
-  private singleBeams: THREE.Mesh[] = [];
+  private beams: THREE.Mesh[] = [];
   private wireframes: THREE.Mesh[] = [];
 
   constructor(
@@ -19,7 +19,7 @@ export class LightUnit {
     this.geometryTemplate = geometryTemplate;
     this.group = new THREE.Group();
 
-    this.createSingleBeams(lightCount, radius, tiltAngle);
+    this.createBeams(lightCount, radius, tiltAngle);
   }
 
   public setUnitTilt(rotation: THREE.Euler): void {
@@ -30,34 +30,34 @@ export class LightUnit {
     this.group.position.set(x, y, z);
   }
 
-  private createSingleBeams(
+  private createBeams(
     lightCount: number,
     radius: number,
     tiltAngle: number
   ): void {
-    this.clearSingleBeams();
+    this.clearBeams();
 
     for (let i = 0; i < lightCount; i++) {
       const angle = (i / lightCount) * Math.PI * 2;
       const x = Math.cos(angle) * radius;
       const z = Math.sin(angle) * radius;
 
-      const singleBeam = new THREE.Mesh(
+      const beam = new THREE.Mesh(
         this.geometryTemplate.clone(),
         this.materialManager.cloneBillboardMaterial()
       );
-      singleBeam.position.set(x, 0, z);
+      beam.position.set(x, 0, z);
 
-      this.applyTilt(singleBeam, x, z, tiltAngle);
+      this.applyTilt(beam, x, z, tiltAngle);
 
-      this.group.add(singleBeam);
-      this.singleBeams.push(singleBeam);
+      this.group.add(beam);
+      this.beams.push(beam);
 
       const wireframe = new THREE.Mesh(
         this.geometryTemplate.clone(),
         this.materialManager.cloneWireframeMaterial()
       );
-      wireframe.position.copy(singleBeam.position);
+      wireframe.position.copy(beam.position);
       wireframe.visible = false;
       this.group.add(wireframe);
       this.wireframes.push(wireframe);
@@ -65,7 +65,7 @@ export class LightUnit {
   }
 
   private applyTilt(
-    singleBeam: THREE.Mesh,
+    beam: THREE.Mesh,
     x: number,
     z: number,
     tiltAngle: number
@@ -78,16 +78,16 @@ export class LightUnit {
     ).normalize();
 
     if (Math.abs(tiltAngle) > 0.001) {
-      singleBeam.rotateOnAxis(tiltAxis, tiltRad);
+      beam.rotateOnAxis(tiltAxis, tiltRad);
     }
   }
 
-  public updateSingleBeamTilt(tiltAngle: number): void {
-    this.singleBeams.forEach((singleBeam, index) => {
-      singleBeam.rotation.set(0, 0, 0);
+  public updateBeamTilt(tiltAngle: number): void {
+    this.beams.forEach((beam, index) => {
+      beam.rotation.set(0, 0, 0);
 
-      const localPos = singleBeam.position.clone();
-      this.applyTilt(singleBeam, localPos.x, localPos.z, tiltAngle);
+      const localPos = beam.position.clone();
+      this.applyTilt(beam, localPos.x, localPos.z, tiltAngle);
 
       if (this.wireframes[index]) {
         this.wireframes[index].rotation.set(0, 0, 0);
@@ -103,7 +103,7 @@ export class LightUnit {
   }
 
   public updateGeometry(newGeometry: THREE.PlaneGeometry): void {
-    [...this.singleBeams, ...this.wireframes].forEach(mesh => {
+    [...this.beams, ...this.wireframes].forEach(mesh => {
       mesh.geometry.dispose();
       mesh.geometry = newGeometry.clone();
     });
@@ -114,8 +114,8 @@ export class LightUnit {
   }
 
   public updateMaterialUniforms(uniforms: Record<string, any>): void {
-    this.singleBeams.forEach(singleBeam => {
-      const material = singleBeam.material as THREE.ShaderMaterial;
+    this.beams.forEach(beam => {
+      const material = beam.material as THREE.ShaderMaterial;
       Object.keys(uniforms).forEach(key => {
         if (material.uniforms[key]) {
           material.uniforms[key].value = uniforms[key];
@@ -125,16 +125,16 @@ export class LightUnit {
   }
 
   public updateCameraPosition(cameraPosition: THREE.Vector3): void {
-    this.singleBeams.forEach(singleBeam => {
-      const material = singleBeam.material as THREE.ShaderMaterial;
+    this.beams.forEach(beam => {
+      const material = beam.material as THREE.ShaderMaterial;
       if (material.uniforms.uCameraPosition) {
         material.uniforms.uCameraPosition.value.copy(cameraPosition);
       }
     });
   }
 
-  private clearSingleBeams(): void {
-    [...this.singleBeams, ...this.wireframes].forEach(mesh => {
+  private clearBeams(): void {
+    [...this.beams, ...this.wireframes].forEach(mesh => {
       this.group.remove(mesh);
       mesh.geometry.dispose();
       if (mesh.material instanceof Array) {
@@ -143,11 +143,11 @@ export class LightUnit {
         mesh.material.dispose();
       }
     });
-    this.singleBeams = [];
+    this.beams = [];
     this.wireframes = [];
   }
 
   public dispose(): void {
-    this.clearSingleBeams();
+    this.clearBeams();
   }
 }

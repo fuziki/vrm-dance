@@ -1,57 +1,57 @@
 import * as THREE from "three";
 import { SpotLightMaterialManager } from "./MaterialManager";
 import { LightUnit } from "./LightUnit";
-import { StageConfig, SpotlightUniforms, SystemConfig, LightUnitConfig, AudienceTierConfig, SingleBeamConfig, DebugConfig } from "../world/config/StageConfig";
+import { StageConfig, SpotlightUniforms, SideStageSystemConfig, LightUnitConfig, CeilingLightConfig, BeamConfig, DebugConfig } from "../world/config/StageConfig";
 
 export class SpotlightSystem {
   private scene: THREE.Scene;
   private camera: THREE.Camera;
-  private materialManager: SpotLightMaterialManager;
-  private audienceMaterialManager: SpotLightMaterialManager;
-  private lightUnits: LightUnit[] = [];
-  private audienceLightUnits: LightUnit[] = [];
-  private rotationSpeed: number = StageConfig.SPOTLIGHT.lightUnit.rotationSpeed;
-  private audienceRotationSpeed: number = StageConfig.SPOTLIGHT.audienceTier.lightUnit.rotationSpeed;
-  private geometry: THREE.PlaneGeometry;
-  private audienceGeometry: THREE.PlaneGeometry;
+  private sideStageMeterialManager: SpotLightMaterialManager;
+  private ceilingMaterialManager: SpotLightMaterialManager;
+  private sideStageUnits: LightUnit[] = [];
+  private ceilingUnits: LightUnit[] = [];
+  private sideStageRotationSpeed: number = StageConfig.SPOTLIGHT.sideStage.lightUnit.rotationSpeed;
+  private ceilingRotationSpeed: number = StageConfig.SPOTLIGHT.ceiling.lightUnit.rotationSpeed;
+  private sideStageGeometry: THREE.PlaneGeometry;
+  private ceilingGeometry: THREE.PlaneGeometry;
 
   constructor(scene: THREE.Scene, camera: THREE.Camera) {
     this.scene = scene;
     this.camera = camera;
-    this.materialManager = new SpotLightMaterialManager(this.createSpotlightUniforms());
-    this.audienceMaterialManager = new SpotLightMaterialManager(this.createAudienceSpotlightUniforms());
-    this.geometry = this.createGeometry();
-    this.audienceGeometry = this.createAudienceGeometry();
+    this.sideStageMeterialManager = new SpotLightMaterialManager(this.createSideStageSpotlightUniforms());
+    this.ceilingMaterialManager = new SpotLightMaterialManager(this.createCeilingSpotlightUniforms());
+    this.sideStageGeometry = this.createSideStageGeometry();
+    this.ceilingGeometry = this.createCeilingGeometry();
 
     this.loadLightUnits();
   }
 
-  private createGeometry(): THREE.PlaneGeometry {
-    const beam: SingleBeamConfig = StageConfig.SPOTLIGHT.singleBeam;
+  private createSideStageGeometry(): THREE.PlaneGeometry {
+    const beam: BeamConfig = StageConfig.SPOTLIGHT.sideStage.beam;
     const geometry = new THREE.PlaneGeometry(beam.topWidth, beam.height);
     geometry.translate(0, beam.height / 2, 0);
     return geometry;
   }
 
-  private createAudienceGeometry(): THREE.PlaneGeometry {
-    const beam: SingleBeamConfig = StageConfig.SPOTLIGHT.audienceTier.singleBeam;
+  private createCeilingGeometry(): THREE.PlaneGeometry {
+    const beam: BeamConfig = StageConfig.SPOTLIGHT.ceiling.beam;
     const geometry = new THREE.PlaneGeometry(beam.topWidth, beam.height);
     geometry.translate(0, beam.height / 2, 0);
     return geometry;
   }
 
   public loadLightUnits(): void {
-    this.clearLightUnits();
+    this.clearSideStageAndCeilingUnits();
 
-    const system: SystemConfig = StageConfig.SPOTLIGHT.system;
-    const lightUnitConfig: LightUnitConfig = StageConfig.SPOTLIGHT.lightUnit;
-    const audienceTier: AudienceTierConfig = StageConfig.SPOTLIGHT.audienceTier;
+    const system: SideStageSystemConfig = StageConfig.SPOTLIGHT.sideStage.system;
+    const lightUnitConfig: LightUnitConfig = StageConfig.SPOTLIGHT.sideStage.lightUnit;
+    const ceilingConfig: CeilingLightConfig = StageConfig.SPOTLIGHT.ceiling;
 
-    // 既存のメインステージ上の照明
+    // メインステージ上のサイドステージライト
     for (let u = 0; u < system.unitCount; u++) {
       const unit = new LightUnit(
-        this.materialManager,
-        this.geometry,
+        this.sideStageMeterialManager,
+        this.sideStageGeometry,
         lightUnitConfig.count,
         lightUnitConfig.circleRadius,
         lightUnitConfig.tiltAngle
@@ -69,14 +69,14 @@ export class SpotlightSystem {
       unit.setUnitTilt(rotation);
 
       this.scene.add(unit.group);
-      this.lightUnits.push(unit);
+      this.sideStageUnits.push(unit);
     }
 
-    // 既存のサイド照明
+    // サイドからのサイドステージライト
     for (let u = 0; u < system.unitCount; u++) {
       const unit = new LightUnit(
-        this.materialManager,
-        this.geometry,
+        this.sideStageMeterialManager,
+        this.sideStageGeometry,
         lightUnitConfig.count,
         lightUnitConfig.circleRadius,
         lightUnitConfig.tiltAngle
@@ -94,18 +94,18 @@ export class SpotlightSystem {
       unit.setUnitTilt(rotation);
 
       this.scene.add(unit.group);
-      this.lightUnits.push(unit);
+      this.sideStageUnits.push(unit);
     }
 
-    // 2階席客席照明（観客席からステージに向けて）
-    if (audienceTier.enabled) {
-      this.createAudienceTierLights(audienceTier);
+    // 天井ライト（客席からステージに向けて）
+    if (ceilingConfig.enabled) {
+      this.createCeilingLights(ceilingConfig);
     }
   }
 
-  private createAudienceTierLights(audienceTier: AudienceTierConfig): void {
-    const k: number = audienceTier.distance;
-    const audienceLightUnitConfig: LightUnitConfig = audienceTier.lightUnit;
+  private createCeilingLights(ceilingConfig: CeilingLightConfig): void {
+    const k: number = ceilingConfig.distance;
+    const ceilingLightUnitConfig: LightUnitConfig = ceilingConfig.lightUnit;
 
     // 4箇所の座標: (k,k), (k,-k), (-k,k), (-k,-k)
     const positions: { x: number; z: number }[] = [
@@ -115,18 +115,18 @@ export class SpotlightSystem {
 
     positions.forEach((pos) => {
       const unit = new LightUnit(
-        this.audienceMaterialManager,
-        this.audienceGeometry,
-        audienceLightUnitConfig.count,
-        audienceLightUnitConfig.circleRadius,
-        audienceLightUnitConfig.tiltAngle
+        this.ceilingMaterialManager,
+        this.ceilingGeometry,
+        ceilingLightUnitConfig.count,
+        ceilingLightUnitConfig.circleRadius,
+        ceilingLightUnitConfig.tiltAngle
       );
 
       // 位置を設定
-      unit.setUnitPosition(pos.x, audienceTier.positionY, pos.z);
+      unit.setUnitPosition(pos.x, ceilingConfig.positionY, pos.z);
 
       // y軸が原点を向くように方向ベクトルを計算
-      const position = new THREE.Vector3(pos.x, audienceTier.positionY, pos.z);
+      const position = new THREE.Vector3(pos.x, ceilingConfig.positionY, pos.z);
       const target = new THREE.Vector3(0, 0, 5);
       const direction = new THREE.Vector3().subVectors(target, position).normalize();
 
@@ -139,33 +139,33 @@ export class SpotlightSystem {
       unit.setUnitTilt(rotation);
 
       this.scene.add(unit.group);
-      this.audienceLightUnits.push(unit);
+      this.ceilingUnits.push(unit);
     });
   }
 
-  public setLightUnitPosition(unitIndex: number, x: number, y: number, z: number): void {
-    if (unitIndex >= 0 && unitIndex < this.lightUnits.length) {
-      this.lightUnits[unitIndex].setUnitPosition(x, y, z);
+  public setSideStageUnitPosition(unitIndex: number, x: number, y: number, z: number): void {
+    if (unitIndex >= 0 && unitIndex < this.sideStageUnits.length) {
+      this.sideStageUnits[unitIndex].setUnitPosition(x, y, z);
     }
   }
 
-  public setLightUnitTilt(unitIndex: number, tiltAngle: number): void {
-    if (unitIndex >= 0 && unitIndex < this.lightUnits.length) {
+  public setSideStageUnitTilt(unitIndex: number, tiltAngle: number): void {
+    if (unitIndex >= 0 && unitIndex < this.sideStageUnits.length) {
       const rotation = new THREE.Euler(0, 0, tiltAngle * Math.PI / 180);
-      this.lightUnits[unitIndex].setUnitTilt(rotation);
+      this.sideStageUnits[unitIndex].setUnitTilt(rotation);
     }
   }
 
-  public updateSingleBeamTilt(tiltAngle: number): void {
-    this.lightUnits.forEach(lightUnit => {
-      lightUnit.updateSingleBeamTilt(tiltAngle);
+  public updateSideStageBeamTilt(tiltAngle: number): void {
+    this.sideStageUnits.forEach(lightUnit => {
+      lightUnit.updateBeamTilt(tiltAngle);
     });
   }
 
-  public updateMaterialUniforms(uniforms: Partial<SpotlightUniforms>): void {
-    this.materialManager.updateUniforms(uniforms);
+  public updateAllMaterialUniforms(uniforms: Partial<SpotlightUniforms>): void {
+    this.sideStageMeterialManager.updateUniforms(uniforms);
 
-    this.lightUnits.forEach(lightUnit => {
+    this.sideStageUnits.forEach(lightUnit => {
       const formattedUniforms: Record<string, any> = {};
       Object.keys(uniforms).forEach(key => {
         const uniformKey = `u${key.charAt(0).toUpperCase()}${key.slice(1)}`;
@@ -176,47 +176,53 @@ export class SpotlightSystem {
   }
 
   public updateSideStageMaterialUniforms(uniforms: Partial<SpotlightUniforms>): void {
-    this.materialManager.updateUniforms(uniforms);
+    this.sideStageMeterialManager.updateUniforms(uniforms);
 
-    this.lightUnits.forEach(lightUnit => {
+    this.sideStageUnits.forEach(lightUnit => {
       // SpotlightUniforms already has the correct keys, pass them directly
       lightUnit.updateMaterialUniforms(uniforms as Record<string, any>);
     });
   }
 
   public updateCeilingMaterialUniforms(uniforms: Partial<SpotlightUniforms>): void {
-    this.audienceMaterialManager.updateUniforms(uniforms);
+    this.ceilingMaterialManager.updateUniforms(uniforms);
 
-    this.audienceLightUnits.forEach(lightUnit => {
+    this.ceilingUnits.forEach(lightUnit => {
       // SpotlightUniforms already has the correct keys, pass them directly
       lightUnit.updateMaterialUniforms(uniforms as Record<string, any>);
     });
   }
 
-  public setWireframeVisibility(visible: boolean): void {
-    this.lightUnits.forEach(lightUnit => {
+  public setSideStageWireframeVisibility(visible: boolean): void {
+    this.sideStageUnits.forEach(lightUnit => {
       lightUnit.setWireframeVisibility(visible);
     });
   }
 
-  public updateGeometry(topWidth?: number, height?: number): void {
-    const beam = StageConfig.SPOTLIGHT.singleBeam;
+  public setCeilingWireframeVisibility(visible: boolean): void {
+    this.ceilingUnits.forEach(lightUnit => {
+      lightUnit.setWireframeVisibility(visible);
+    });
+  }
+
+  public updateSideStageGeometry(topWidth?: number, height?: number): void {
+    const beam = StageConfig.SPOTLIGHT.sideStage.beam;
     const newTopWidth = topWidth ?? beam.topWidth;
     const newHeight = height ?? beam.height;
 
     const newGeometry = new THREE.PlaneGeometry(newTopWidth, newHeight);
     newGeometry.translate(0, newHeight / 2, 0);
 
-    this.lightUnits.forEach(lightUnit => {
+    this.sideStageUnits.forEach(lightUnit => {
       lightUnit.updateGeometry(newGeometry);
     });
 
-    this.geometry.dispose();
-    this.geometry = newGeometry;
+    this.sideStageGeometry.dispose();
+    this.sideStageGeometry = newGeometry;
   }
 
-  private createSpotlightUniforms(): SpotlightUniforms {
-    const beam: SingleBeamConfig = StageConfig.SPOTLIGHT.singleBeam;
+  private createSideStageSpotlightUniforms(): SpotlightUniforms {
+    const beam: BeamConfig = StageConfig.SPOTLIGHT.sideStage.beam;
     const debug: DebugConfig = StageConfig.SPOTLIGHT.debug;
 
     return {
@@ -232,8 +238,8 @@ export class SpotlightSystem {
     };
   }
 
-  private createAudienceSpotlightUniforms(): SpotlightUniforms {
-    const beam: SingleBeamConfig = StageConfig.SPOTLIGHT.audienceTier.singleBeam;
+  private createCeilingSpotlightUniforms(): SpotlightUniforms {
+    const beam: BeamConfig = StageConfig.SPOTLIGHT.ceiling.beam;
     const debug: DebugConfig = StageConfig.SPOTLIGHT.debug;
 
     return {
@@ -250,40 +256,44 @@ export class SpotlightSystem {
   }
 
   public update(): void {
-    this.lightUnits.forEach(lightUnit => {
+    this.sideStageUnits.forEach(lightUnit => {
       lightUnit.updateCameraPosition(this.camera.position);
-      lightUnit.rotateGroup(this.rotationSpeed * 0.01);
+      lightUnit.rotateGroup(this.sideStageRotationSpeed * 0.01);
     });
 
-    this.audienceLightUnits.forEach(lightUnit => {
+    this.ceilingUnits.forEach(lightUnit => {
       lightUnit.updateCameraPosition(this.camera.position);
-      lightUnit.rotateGroup(this.audienceRotationSpeed * 0.01);
+      lightUnit.rotateGroup(this.ceilingRotationSpeed * 0.01);
     });
   }
 
-  public setRotationSpeed(speed: number): void {
-    this.rotationSpeed = speed;
+  public setSideStageRotationSpeed(speed: number): void {
+    this.sideStageRotationSpeed = speed;
   }
 
-  private clearLightUnits(): void {
-    this.lightUnits.forEach(lightUnit => {
-      this.scene.remove(lightUnit.group);
-      lightUnit.dispose();
-    });
-    this.lightUnits = [];
+  public setCeilingRotationSpeed(speed: number): void {
+    this.ceilingRotationSpeed = speed;
+  }
 
-    this.audienceLightUnits.forEach(lightUnit => {
+  private clearSideStageAndCeilingUnits(): void {
+    this.sideStageUnits.forEach(lightUnit => {
       this.scene.remove(lightUnit.group);
       lightUnit.dispose();
     });
-    this.audienceLightUnits = [];
+    this.sideStageUnits = [];
+
+    this.ceilingUnits.forEach(lightUnit => {
+      this.scene.remove(lightUnit.group);
+      lightUnit.dispose();
+    });
+    this.ceilingUnits = [];
   }
 
   public dispose(): void {
-    this.clearLightUnits();
-    this.geometry.dispose();
-    this.audienceGeometry.dispose();
-    this.materialManager.dispose();
-    this.audienceMaterialManager.dispose();
+    this.clearSideStageAndCeilingUnits();
+    this.sideStageGeometry.dispose();
+    this.ceilingGeometry.dispose();
+    this.sideStageMeterialManager.dispose();
+    this.ceilingMaterialManager.dispose();
   }
 }

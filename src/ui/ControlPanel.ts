@@ -40,11 +40,11 @@ export class ControlPanel {
     `;
 
     // Get current config values
-    const sideVertical = StageConfig.SPOTLIGHT.singleBeam.verticalGain;
-    const sideHorizontal = StageConfig.SPOTLIGHT.singleBeam.horizontalGain;
-    const ceilingVertical = StageConfig.SPOTLIGHT.audienceTier.singleBeam.verticalGain;
-    const ceilingHorizontal = StageConfig.SPOTLIGHT.audienceTier.singleBeam.horizontalGain;
-    const ceilingEnabled = StageConfig.SPOTLIGHT.audienceTier.enabled;
+    const sideVertical = StageConfig.SPOTLIGHT.sideStage.beam.verticalGain;
+    const sideHorizontal = StageConfig.SPOTLIGHT.sideStage.beam.horizontalGain;
+    const ceilingVertical = StageConfig.SPOTLIGHT.ceiling.beam.verticalGain;
+    const ceilingHorizontal = StageConfig.SPOTLIGHT.ceiling.beam.horizontalGain;
+    const ceilingEnabled = StageConfig.SPOTLIGHT.ceiling.enabled;
 
     this.element.innerHTML = `
       <div style="margin-bottom: 20px;">
@@ -216,7 +216,7 @@ export class ControlPanel {
 
     this.spotlightSystem.updateSideStageMaterialUniforms(sideUniforms);
 
-    // Update ceiling lights (audience tier)
+    // Update ceiling lights
     const ceilingUniforms: Partial<SpotlightUniforms> = {
       uVerticalGain: ceilingEnabled ? ceilingVertical : 0,
       uHorizontalGain: ceilingEnabled ? ceilingHorizontal : 0
