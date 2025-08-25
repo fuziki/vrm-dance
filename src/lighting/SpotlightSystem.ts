@@ -1,13 +1,13 @@
 import * as THREE from "three";
-import { MaterialManager } from "./MaterialManager";
+import { SpotLightMaterialManager } from "./MaterialManager";
 import { LightUnit } from "./LightUnit";
 import { StageConfig, SpotlightUniforms, SystemConfig, LightUnitConfig, AudienceTierConfig, SingleBeamConfig, DebugConfig } from "../world/config/StageConfig";
 
 export class SpotlightSystem {
   private scene: THREE.Scene;
   private camera: THREE.Camera;
-  private materialManager: MaterialManager;
-  private audienceMaterialManager: MaterialManager;
+  private materialManager: SpotLightMaterialManager;
+  private audienceMaterialManager: SpotLightMaterialManager;
   private lightUnits: LightUnit[] = [];
   private audienceLightUnits: LightUnit[] = [];
   private rotationSpeed: number = StageConfig.SPOTLIGHT.lightUnit.rotationSpeed;
@@ -18,8 +18,8 @@ export class SpotlightSystem {
   constructor(scene: THREE.Scene, camera: THREE.Camera) {
     this.scene = scene;
     this.camera = camera;
-    this.materialManager = new MaterialManager(this.createSpotlightUniforms());
-    this.audienceMaterialManager = new MaterialManager(this.createAudienceSpotlightUniforms());
+    this.materialManager = new SpotLightMaterialManager(this.createSpotlightUniforms());
+    this.audienceMaterialManager = new SpotLightMaterialManager(this.createAudienceSpotlightUniforms());
     this.geometry = this.createGeometry();
     this.audienceGeometry = this.createAudienceGeometry();
 

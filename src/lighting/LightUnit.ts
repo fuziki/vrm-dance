@@ -1,22 +1,22 @@
 import * as THREE from "three";
-import { MaterialManager } from "./MaterialManager";
+import { SpotLightMaterialManager } from "./MaterialManager";
 
 export class LightUnit {
-  private materialManager: MaterialManager;
-  private geometry: THREE.PlaneGeometry;
+  private materialManager: SpotLightMaterialManager;
+  private geometryTemplate: THREE.PlaneGeometry;
   public group: THREE.Group;
   private singleBeams: THREE.Mesh[] = [];
   private wireframes: THREE.Mesh[] = [];
 
   constructor(
-    materialManager: MaterialManager,
-    geometry: THREE.PlaneGeometry,
+    materialManager: SpotLightMaterialManager,
+    geometryTemplate: THREE.PlaneGeometry,
     lightCount: number,
     radius: number,
     tiltAngle: number
   ) {
     this.materialManager = materialManager;
-    this.geometry = geometry;
+    this.geometryTemplate = geometryTemplate;
     this.group = new THREE.Group();
 
     this.createSingleBeams(lightCount, radius, tiltAngle);
@@ -43,7 +43,7 @@ export class LightUnit {
       const z = Math.sin(angle) * radius;
 
       const singleBeam = new THREE.Mesh(
-        this.geometry.clone(),
+        this.geometryTemplate.clone(),
         this.materialManager.cloneBillboardMaterial()
       );
       singleBeam.position.set(x, 0, z);
@@ -54,7 +54,7 @@ export class LightUnit {
       this.singleBeams.push(singleBeam);
 
       const wireframe = new THREE.Mesh(
-        this.geometry.clone(),
+        this.geometryTemplate.clone(),
         this.materialManager.cloneWireframeMaterial()
       );
       wireframe.position.copy(singleBeam.position);

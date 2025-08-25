@@ -3,16 +3,16 @@ import spotlightVertexShader from '../rendering/shaders/spotlight.vert';
 import spotlightFragmentShader from '../rendering/shaders/spotlight.frag';
 import { SpotlightUniforms } from '../world/config/StageConfig';
 
-export class MaterialManager {
-  private billboardMaterial: THREE.ShaderMaterial;
-  private wireframeMaterial: THREE.MeshBasicMaterial;
+export class SpotLightMaterialManager {
+  private billboardMaterialTemplate: THREE.ShaderMaterial;
+  private wireframeMaterialTemplate: THREE.MeshBasicMaterial;
 
   constructor(spotlightUniforms: SpotlightUniforms) {
     this.createMaterials(spotlightUniforms);
   }
 
   private createMaterials(uniforms: SpotlightUniforms): void {
-    this.billboardMaterial = new THREE.ShaderMaterial({
+    this.billboardMaterialTemplate = new THREE.ShaderMaterial({
       vertexShader: spotlightVertexShader,
       fragmentShader: spotlightFragmentShader,
       uniforms: {
@@ -33,7 +33,7 @@ export class MaterialManager {
       depthWrite: false
     });
 
-    this.wireframeMaterial = new THREE.MeshBasicMaterial({
+    this.wireframeMaterialTemplate = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       wireframe: true,
       transparent: true,
@@ -43,23 +43,23 @@ export class MaterialManager {
 
   public updateUniforms(uniforms: Partial<SpotlightUniforms>): void {
     Object.keys(uniforms).forEach(key => {
-      if (this.billboardMaterial.uniforms[key]) {
-        this.billboardMaterial.uniforms[key].value = uniforms[key as keyof SpotlightUniforms];
+      if (this.billboardMaterialTemplate.uniforms[key]) {
+        this.billboardMaterialTemplate.uniforms[key].value = uniforms[key as keyof SpotlightUniforms];
       }
     });
   }
 
   public cloneBillboardMaterial(): THREE.ShaderMaterial {
-    const clonedMaterial = this.billboardMaterial.clone();
+    const clonedMaterial = this.billboardMaterialTemplate.clone();
     return clonedMaterial;
   }
 
   public cloneWireframeMaterial(): THREE.MeshBasicMaterial {
-    return this.wireframeMaterial.clone();
+    return this.wireframeMaterialTemplate.clone();
   }
 
   public dispose(): void {
-    this.billboardMaterial.dispose();
-    this.wireframeMaterial.dispose();
+    this.billboardMaterialTemplate.dispose();
+    this.wireframeMaterialTemplate.dispose();
   }
 }
